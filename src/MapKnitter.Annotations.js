@@ -19,6 +19,11 @@ MapKnitter.Annotations.include({
 		}).addTo(map);
 
 		this._initEvents();
+
+		/* Get annotations for this map. */
+		this.retrieve(function(annotations) {
+			new L.GeoJSON(annotations).addTo(map);
+		});
 	},
 
 	_initEvents: function() {
@@ -32,7 +37,11 @@ MapKnitter.Annotations.include({
 
 			/* Create new database record via AJAX request; see MapKnitter.Resources#create. */
 			this.create(layer);
-		}, this);		
+		}, this);
+
+		map.on('draw:edit', function() {
+
+		});
 	},
 
 	toJSON: function(annotation) {
