@@ -1,4 +1,5 @@
 MapKnitter.Annotations.include({
+
 	initialize: function(options) {
 		MapKnitter.Resources.prototype.initialize.call(this, options);
 
@@ -41,7 +42,7 @@ MapKnitter.Annotations.include({
 			text: 			this._getContent(annotation),
 		};
 
-		/* If the annotationa already exists in the database. */
+		/* If the annotation already exists in the database. */
 		if (annotation._mapknitter_id) {
 			json.id = annotation._mapknitter_id;
 		}
@@ -55,15 +56,15 @@ MapKnitter.Annotations.include({
 			coord;
 
 		if (annotation.getLatLng) {
-			latlngs = [annotation.getLatLng()];
+			coord = annotation.getLatLng();
+			coordinates = [coord.lng, coord.lat];
 		} else if (annotation.getLatLngs) {
 			latlngs = annotation.getLatLngs();
+			for (var i = 0; i < latlngs.length; i++) {
+				coord = latlngs[i];
+				coordinates.push([coord.lng, coord.lat]);
+			}			
 		}			
-
-		for (var i = 0; i < latlngs.length; i++) {
-			coord = latlngs[i];
-			coordinates.push([coord.lng, coord.lat]);
-		}
 
 		return coordinates;
 	},
