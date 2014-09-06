@@ -22,7 +22,8 @@ MapKnitter.Annotations.include({
 
 		/* Get annotations for this map. */
 		this.retrieve(function(annotations) {
-			new L.GeoJSON(annotations).addTo(map);
+			new L.GeoJSON(annotations, { pointToLayer: this.fromGeoJSON })
+				.addTo(map);
 		});
 	},
 
@@ -45,47 +46,21 @@ MapKnitter.Annotations.include({
 	},
 
 	toJSON: function(annotation) {
-		var json = {
-			type: 			annotation.type,
-			coordinates: 	this._getGeoJSONCoordinates(annotation),
-			text: 			this._getContent(annotation),
-		};
+		var geojson = annotation.toGeoJSON(),
+			type = geojson.properties.pointType;
 
-		/* If the annotation already exists in the database. */
-		if (annotation._mapknitter_id) {
-			json.id = annotation._mapknitter_id;
-		}
+		geojson.properties.annotation_type = type;
 
-		return json;
+		return geojson;
 	},
 
-	_getGeoJSONCoordinates: function(annotation) {
-		var coordinates = [],
-			latlngs,
-			coord;
-
-		if (annotation.getLatLng) {
-			coord = annotation.getLatLng();
-			coordinates = [coord.lng, coord.lat];
-		} else if (annotation.getLatLngs) {
-			latlngs = annotation.getLatLngs();
-			for (var i = 0; i < latlngs.length; i++) {
-				coord = latlngs[i];
-				coordinates.push([coord.lng, coord.lat]);
-			}			
-		}			
-
-		return coordinates;
-	},
-
-	_getContent: function(annotation) {
-		var content = '';
-
-		if (annotation.getContent) {
-			content = annotation.getContent();
-		}
-
-		return content;
+	fromGeoJSON: function(geojson, latlng) {
+		var textbox = new L.Illustrate.Textbox(latlng, {
+			minWidth: geojson.properties.style.width,
+			minHeight: geojson.properties.style.height,
+			text: geojson.properties.text
+		});
+		return textbox;
 	}
 
 });

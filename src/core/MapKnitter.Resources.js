@@ -20,10 +20,9 @@ MapKnitter.Resources = MapKnitter.Class.extend({
 	},
 
 	create: function(annotation) {
-		this._createResource(annotation, newResource)
+		this._createResource(annotation)
 			.done.call(this, function() {
 				console.log('created new resource');
-				console.log(newResource);
 			});
 	},
 
@@ -54,7 +53,7 @@ MapKnitter.Resources = MapKnitter.Class.extend({
 			url: url,
 			dataType: 'json',
 			context: this,
-			success: function(data) { callback(data); },
+			success: function(data) { callback.call(this, data); },
 			error: function(jqXHR, status, thrownError) { console.log(thrownError);	}
 		});
 	},
